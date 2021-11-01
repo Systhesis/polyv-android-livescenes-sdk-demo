@@ -99,6 +99,31 @@
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/plv_color_topic_tab_bottom_selector" />
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/plv_login_playlist_group_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/plv_login_tv_personal_playlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginBottom="3dp"
+                        android:gravity="center"
+                        android:text="列表"
+                        android:textColor="@drawable/plv_color_topic_tab_text_selector"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="3dp"
+                        android:layout_below="@id/plv_login_tv_personal_playlist"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/plv_color_topic_tab_bottom_selector" />
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -146,6 +171,41 @@
 
             <include layout="@layout/plv_login_playback_layout" />
 
+            <LinearLayout
+                android:id="@+id/plv_login_list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/dm_20"
+                android:layout_marginRight="@dimen/dm_20"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/plv_login_list_user_id"
+                    style="@style/plv_login_edit_text_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dm_42"
+                    android:layout_margin="@dimen/dm_10"
+                    android:hint="@string/plv_login_userId" />
+
+                <EditText
+                    android:id="@+id/plv_login_list_app_id"
+                    style="@style/plv_login_edit_text_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dm_42"
+                    android:layout_margin="@dimen/dm_10"
+                    android:hint="@string/plv_login_appId" />
+
+                <EditText
+                    android:id="@+id/plv_login_list_app_secert"
+                    style="@style/plv_login_edit_text_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dm_42"
+                    android:layout_margin="@dimen/dm_10"
+                    android:hint="@string/plv_login_appSecert" />
+
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/plv_login_tv_login"
                 android:layout_width="@dimen/dm_307"
@@ -160,6 +220,7 @@
                 android:textSize="18sp" />
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/bottom_group_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

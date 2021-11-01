@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -40,6 +41,14 @@ import com.plv.thirdpart.blankj.utilcode.util.ToastUtils;
  */
 public class PLVLoginWatcherActivity extends PLVBaseActivity {
 
+    private static final String POLYV_USER_ID = "555e3f1c7b";
+    private static final String POLYV_SECRET_KEY = "3VIXr7YO4c";
+    private static final String POLYV_READ_TOKEN = "d740fd70-ef5e-4aad-93c8-3e478f5f2631";
+    private static final String POLYV_WRITE_TOKEN = "fe9f5580-4306-48ca-b67a-422fdba7467a";
+
+    private static final String POLYV_APP_ID = "f9nmrmtulz";
+    private static final String POLYV_APP_SECRET = "691649a3d726477cafd8b5ccb7f3b460";
+
     // <editor-fold defaultstate="collapsed" desc="实例变量">
     private static final String TAG = "PLVLoginActivity";
     //manager
@@ -51,6 +60,10 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
     private TextView tvLogoText;
     private RelativeLayout rlLiveGroupLayout;
     private RelativeLayout rlPlaybackGroupLayout;
+
+    //add
+    private RelativeLayout rlPlayListGroupLayout;
+
     private EditText etLiveUserId;
     private EditText etLiveChannelId;
     private EditText etLiveAppId;
@@ -62,6 +75,13 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
     private EditText etPlaybackAppSecret;
     private EditText etPlaybackVideoId;
     private LinearLayout llPlaybackLayout;
+    //add
+    private LinearLayout llPlayListLayout;
+    private EditText etPlaylistUserId;
+    private EditText etPlaylistAppId;
+    private EditText etPlaylistAppSecret;
+    private ConstraintLayout clBottomLayout;
+
     private TextView tvLogin;
     private RadioGroup rgScene;
     private SwitchCompat swtichPlaybackVodlistSw;
@@ -70,7 +90,7 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
 
     //status
     //当前是否显示的是直播，默认显示直播tab
-    private boolean isShowLive = true;
+    private int isShowLive = 0;
     //当前选择的场景
     private PLVLiveScene curScene = PLVLiveScene.CLOUDCLASS;
 
@@ -88,7 +108,7 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (isShowLive) {
+            if (isShowLive == 0) {
                 boolean hasEmpty = isEtEmpty(etLiveAppId) || isEtEmpty(etLiveAppSecert)
                         || isEtEmpty(etLiveChannelId) || isEtEmpty(etLiveUserId);
                 tvLogin.setEnabled(!hasEmpty);
@@ -142,6 +162,17 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
         tvLogoText = findViewById(R.id.plv_login_logo_text);
         rlLiveGroupLayout = findViewById(R.id.plv_login_live_group_layout);
         rlPlaybackGroupLayout = findViewById(R.id.plv_login_playback_group_layout);
+
+        //add
+        rlPlayListGroupLayout = findViewById(R.id.plv_login_playlist_group_layout);
+        llPlayListLayout = findViewById(R.id.plv_login_list_layout);
+
+        etPlaylistUserId = findViewById(R.id.plv_login_list_user_id);
+        etPlaylistAppId = findViewById(R.id.plv_login_list_app_id);;
+        etPlaylistAppSecret = findViewById(R.id.plv_login_list_app_secert);
+
+        clBottomLayout = findViewById(R.id.bottom_group_layout);
+
         etLiveUserId = findViewById(R.id.plv_login_live_user_id);
         etLiveChannelId = findViewById(R.id.plv_login_live_channel_id);
         etLiveAppId = findViewById(R.id.plv_login_live_app_id);
@@ -188,12 +219,16 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
         rlLiveGroupLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isShowLive = true;
+                isShowLive = 0;
                 rlLiveGroupLayout.setSelected(true);
                 rlPlaybackGroupLayout.setSelected(false);
-
+                //add
+                rlPlayListGroupLayout.setSelected(false);
+                clBottomLayout.setVisibility(View.VISIBLE);
+                etLiveUserId.setVisibility(View.VISIBLE);
                 llLiveLayout.setVisibility(View.VISIBLE);
                 llPlaybackLayout.setVisibility(View.GONE);
+                llPlayListLayout.setVisibility(View.GONE);
                 swtichPlaybackVodlistSw.setVisibility(View.GONE);
                 textWatcher.afterTextChanged(etLiveChannelId.getText());
             }
@@ -201,14 +236,36 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
         rlPlaybackGroupLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isShowLive = false;
+                isShowLive = 1;
                 rlLiveGroupLayout.setSelected(false);
                 rlPlaybackGroupLayout.setSelected(true);
-
+                //add
+                rlPlayListGroupLayout.setSelected(false);
+                clBottomLayout.setVisibility(View.VISIBLE);
+                etLiveUserId.setVisibility(View.VISIBLE);
                 llLiveLayout.setVisibility(View.GONE);
                 llPlaybackLayout.setVisibility(View.VISIBLE);
+                llPlayListLayout.setVisibility(View.GONE);
                 swtichPlaybackVodlistSw.setVisibility(View.VISIBLE);
                 textWatcher.afterTextChanged(etPlaybackChannelId.getText());
+            }
+        });
+
+        //add
+        rlPlayListGroupLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isShowLive = 2;
+                rlLiveGroupLayout.setSelected(false);
+                rlPlaybackGroupLayout.setSelected(false);
+                //add
+                rlPlayListGroupLayout.setSelected(true);
+                clBottomLayout.setVisibility(View.INVISIBLE);
+
+                llLiveLayout.setVisibility(View.GONE);
+                llPlaybackLayout.setVisibility(View.GONE);
+                llPlayListLayout.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -235,10 +292,12 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
             @Override
             public void onClick(View v) {
                 loginProgressDialog.show();
-                if (isShowLive) {
+                if (isShowLive == 0) {
                     loginLive();
-                } else {
+                } else if(isShowLive == 1) {
                     loginPlayback();
+                } else if(isShowLive == 2) {
+                    loginPlaylist();
                 }
             }
         });
@@ -260,16 +319,21 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
 
     // <editor-fold defaultstate="collapsed" desc="设置测试数据">
     private void setTestData() {
-        etLiveAppId.setText("");
-        etLiveAppSecert.setText("");
-        etLiveUserId.setText("");
-        etLiveChannelId.setText("");
 
-        etPlaybackAppId.setText("");
-        etPlaybackAppSecret.setText("");
-        etPlaybackUserId.setText("");
-        etPlaybackChannelId.setText("");
-        etPlaybackVideoId.setText("");
+        etLiveAppId.setText(POLYV_APP_ID);
+        etLiveAppSecert.setText(POLYV_APP_SECRET);
+        etLiveUserId.setText(POLYV_USER_ID);
+        etLiveChannelId.setText("2636608");
+
+        etPlaybackAppId.setText(POLYV_APP_ID);
+        etPlaybackAppSecret.setText(POLYV_APP_SECRET);
+        etPlaybackUserId.setText(POLYV_USER_ID);
+        etPlaybackChannelId.setText("2636608");
+        etPlaybackVideoId.setText("555e3f1c7b397fa17a15bc9e78a7342d_5");
+
+        etPlaylistUserId.setText(POLYV_USER_ID);
+        etPlaylistAppId.setText(POLYV_APP_ID);
+        etPlaylistAppSecret.setText(POLYV_APP_SECRET);
     }
     // </editor-fold>
 
@@ -330,6 +394,63 @@ public class PLVLoginWatcherActivity extends PLVBaseActivity {
         final String userId = etPlaybackUserId.getText().toString();
         final String channelId = etPlaybackChannelId.getText().toString();
         final String vid = etPlaybackVideoId.getText().toString();
+        loginManager.loginPlayback(appId, appSecret, userId, channelId, vid, new IPLVSceneLoginManager.OnLoginListener<PolyvPlaybackLoginResult>() {
+            @Override
+            public void onLoginSuccess(PolyvPlaybackLoginResult polyvPlaybackLoginResult) {
+                loginProgressDialog.dismiss();
+                PLVLiveChannelConfigFiller.setupAccount(userId, appId, appSecret);
+                PolyvLiveChannelType channelType = polyvPlaybackLoginResult.getChannelType();
+                switch (curScene) {
+                    //进入云课堂场景
+                    case CLOUDCLASS:
+                        if (PLVLiveScene.isCloudClassSceneSupportType(channelType)) {
+                            PLVLaunchResult launchResult = PLVLCCloudClassActivity.launchPlayback(PLVLoginWatcherActivity.this, channelId, channelType,
+                                    vid, getViewerId(), getViewerName(),getViewerAvatar(),
+                                    swtichPlaybackVodlistSw.isChecked() ? PolyvPlaybackListType.VOD : PolyvPlaybackListType.PLAYBACK
+                            );
+                            if (!launchResult.isSuccess()) {
+                                ToastUtils.showShort(launchResult.getErrorMessage());
+                            }
+                        } else {
+                            ToastUtils.showShort(R.string.plv_scene_login_toast_cloudclass_no_support_type);
+                        }
+                        break;
+                    //进入直播带货场景
+                    case ECOMMERCE:
+                        if (PLVLiveScene.isLiveEcommerceSceneSupportType(channelType)) {
+                            PLVLaunchResult launchResult = PLVECLiveEcommerceActivity.launchPlayback(PLVLoginWatcherActivity.this, channelId,
+                                    vid, getViewerId(), getViewerName(),getViewerAvatar(),
+                                    swtichPlaybackVodlistSw.isChecked() ? PolyvPlaybackListType.VOD : PolyvPlaybackListType.PLAYBACK);
+                            if (!launchResult.isSuccess()) {
+                                ToastUtils.showShort(launchResult.getErrorMessage());
+                            }
+                        } else {
+                            ToastUtils.showShort(R.string.plv_scene_login_toast_liveecommerce_no_support_type);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onLoginFailed(String msg, Throwable throwable) {
+                loginProgressDialog.dismiss();
+                ToastUtils.showShort(msg);
+                PLVCommonLog.e(TAG,"loginPlayback onLoginFailed:"+throwable.getMessage());
+            }
+        });
+    }
+
+    private void loginPlaylist() {
+        final String appId = etPlaybackAppId.getText().toString();
+        final String appSecret = etPlaybackAppSecret.getText().toString();
+        final String userId = etPlaybackUserId.getText().toString();
+        final String channelId = etPlaybackChannelId.getText().toString();
+        final String vid = etPlaybackVideoId.getText().toString();
+        PLVLiveChannelConfigFiller.setupAccount(userId, appId, appSecret);
+
+
         loginManager.loginPlayback(appId, appSecret, userId, channelId, vid, new IPLVSceneLoginManager.OnLoginListener<PolyvPlaybackLoginResult>() {
             @Override
             public void onLoginSuccess(PolyvPlaybackLoginResult polyvPlaybackLoginResult) {
